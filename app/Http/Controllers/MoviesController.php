@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\ViewModels\MovieViewModel;
+use App\ViewModels\MoviesViewModel;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Arr;
 
 class MoviesController extends Controller
 {
@@ -15,27 +16,25 @@ class MoviesController extends Controller
      */
     public function index()
     {
-        $popularMovies = collect(Http::withToken(config('services.tmdb.token'))
+        $popularMovies = Http::withToken(config('services.tmdb.token'))
             ->get('https://api.themoviedb.org/3/movie/popular')
-            ->json()['results'])->take(10);
+            ->json()['results'];
 
-        $nowPlayingMovies = collect(Http::withToken(config('services.tmdb.token'))
-            ->get('https://api.themoviedb.org/3//movie/now_playing')
-            ->json()['results'])->take(10);    
+        $nowPlayingMovies = Http::withToken(config('services.tmdb.token'))
+            ->get('https://api.themoviedb.org/3/movie/now_playing')
+            ->json()['results'];   
 
-        $genreArray = Http::withToken(config('services.tmdb.token'))
+        $genre = Http::withToken(config('services.tmdb.token'))
             ->get('https://api.themoviedb.org/3/genre/movie/list')
             ->json()['genres'];
+        
+        $viewModel = new MoviesViewModel(
+            $popularMovies,
+            $nowPlayingMovies,
+            $genre
+        );
 
-        $genre = collect($genreArray)->mapWithKeys(function ($genre) {
-            return [$genre['id'] => $genre['name']];
-        });
-            
-        return view('index', [
-            'popularMovies' => $popularMovies,
-            'genres' => $genre,
-            'nowPlayingMovies' => $nowPlayingMovies
-        ]);
+        return view('index', $viewModel);
     }
 
     /**
@@ -71,11 +70,11 @@ class MoviesController extends Controller
         ->get('https://api.themoviedb.org/3/movie/' . $id . '?append_to_response=credits,videos,images')
         ->json());
 
-        // dump($movie);
+        $viewModel = new MovieViewModel(
+            $movie
+        );
 
-        return view('show', [
-            'movie' => $movie,
-        ]);
+        return view('show', $viewModel);
     }
 
     /**
