@@ -18,7 +18,6 @@ class ActorsViewModel extends ViewModel
     public function popularActors()
     {
         return collect($this->popularActors)->map(function($actor) {
-
             // merge the data that we want from the request to the request and return only the fields used
             return collect($actor)->merge([
                 'profile_path' => $actor['profile_path'] ? 
@@ -29,7 +28,7 @@ class ActorsViewModel extends ViewModel
                 )->implode(', ')
             ])->only([
                 'name', 'id', 'profile_path', 'known_for'
-            ])->dump();
+            ]);
         });
     }
 
