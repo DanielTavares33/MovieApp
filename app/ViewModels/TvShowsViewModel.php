@@ -20,12 +20,12 @@ class TvShowsViewModel extends ViewModel
 
     public function popularTV() 
     {
-        return $this->formattvshowss($this->populaTV)->dump();
+        return $this->formattvshowss($this->populaTV);
     }
 
     public function topRatedTv() 
     {
-        return $this->formattvshowss($this->topRatedTv)->dump();
+        return $this->formattvshowss($this->topRatedTv);
     }
 
     public function genres() 
@@ -37,10 +37,6 @@ class TvShowsViewModel extends ViewModel
 
     private function formattvshowss($tv)
     {
-        // return collect($tv)->map(function($tvshow) {
-        //     return $tvshow;
-        // });
-
         return collect($tv)->map(function($tvshows) {
 
             $genresFormated = collect($tvshows['genre_ids'])->mapWithKeys(function($value) {
@@ -49,7 +45,7 @@ class TvShowsViewModel extends ViewModel
 
             // merge the data that we want from the request to the request and return only the fields used
             return collect($tvshows)->merge([
-                'poster_path' => 'https://image.tmdb.org/t/p/w500' . $tvshows['poster_path'],
+                'poster_path' => $tvshows['poster_path'] ? 'https://image.tmdb.org/t/p/w500' . $tvshows['poster_path'] : ' https://dummyimage.com/500x750/ffffff/000000.png',
                 'vote_average' => $tvshows['vote_average'] * 10 . '%',
                 'first_air_date' => Carbon::parse($tvshows['first_air_date'])->format('M d, Y'),
                 'genres' => $genresFormated
