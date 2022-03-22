@@ -33,11 +33,11 @@ class SearchViewModel extends ViewModel
                 $image = 'https://via.placeholder.com/185x278';
             }
 
-            if (isset($result['media_type'])  === 'movie') {
+            if ($result['media_type'] === 'movie') {
                 $linkToPage = route('movies.show', $result['id']);
-            } else if (isset($result['media_type'])  === 'tv') {
+            } else if ($result['media_type'] === 'tv') {
                 $linkToPage = route('tv.show', $result['id']);
-            } else if (isset($result['media_type'])  === 'person') {
+            } else if ($result['media_type'] === 'person') {
                 $linkToPage = route('actors.show', $result['id']);
             } else {
                 $linkToPage = null;
